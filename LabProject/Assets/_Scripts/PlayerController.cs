@@ -35,7 +35,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] LayerMask _groundMask;
 
-    [SerializeField] bool _isGrounded;  
+    [SerializeField] bool _isGrounded;
+
+    [Header("Respawn Location")]
+    [SerializeField] Transform _respawn;
 
 
 
@@ -43,12 +46,13 @@ public class PlayerController : MonoBehaviour
     {
         _controller = GetComponent<CharacterController>();
         _inputs = new LabProject();
-        _inputs.Enable();
         _inputs.Player.Move.performed += context => _move = context.ReadValue<Vector2>();
         _inputs.Player.Move.canceled += context => _move = Vector2.zero;
         _inputs.Player.Jump.performed += context => Jump();
     }
+   void OnEnable() => _inputs.Enable();
 
+   void OnDisable() => _inputs.Disable();
 
     private void FixedUpdate()
     {
@@ -76,7 +80,19 @@ public class PlayerController : MonoBehaviour
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
         }
-           
-        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("death"))
+        {
+            Debug.Log("Triggerin with other.tag" + other.gameObject.tag);
+            _controller.enabled = false;
+            transform.position = _respawn.position;
+            _controller.enabled = true;
+            //Destroy(gameObject);  
+        }
+
+      
     }
 }
