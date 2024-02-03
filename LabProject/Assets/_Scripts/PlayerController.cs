@@ -92,7 +92,5 @@ public class PlayerController : MonoBehaviour
             _controller.enabled = true;
             //Destroy(gameObject);  
         }
-
-      
     }
 }
