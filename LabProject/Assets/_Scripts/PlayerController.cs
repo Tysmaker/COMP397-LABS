@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Subject
 {
 
     LabProject _inputs;
@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
             _velocity.y = -2.0f;
         }
         Vector3 movement = new Vector3(_move.x, 0.0f, _move.y) * _speed * Time.fixedDeltaTime;
+        if(!_controller.enabled) { return; }
         _controller.Move(movement);
         _velocity.y += _gravity * Time.fixedDeltaTime;
         _controller.Move(_velocity * Time.fixedDeltaTime);
@@ -79,18 +80,20 @@ public class PlayerController : MonoBehaviour
         if(_isGrounded)
         {
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
+            NotifyObservers(PlayerEnums.Jump);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("death"))
+        Debug.Log("Triggerin with other.tag" + other.gameObject.tag);
+        if (other.gameObject.CompareTag("death"))
         {
-            Debug.Log("Triggerin with other.tag" + other.gameObject.tag);
             _controller.enabled = false;
             transform.position = _respawn.position;
             _controller.enabled = true;
             //Destroy(gameObject);  
+            NotifyObservers(PlayerEnums.Died);
         }
     }
 }
