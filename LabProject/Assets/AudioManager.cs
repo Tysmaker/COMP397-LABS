@@ -1,49 +1,64 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
-[Serializable]
-public class AudioData
-{
 
-    public string audioName;
-
-    public AudioClip audioClip;
-}
 
 public class AudioManager : MonoBehaviour, IObserver
 {
     
-    [SerializeField] private List<AudioData> audios = new List<AudioData>();
-    [SerializeField] private AudioSource _sfxPlayer;
+    [SerializeField] private List<AudioAsset> audios = new List<AudioAsset>();
     [SerializeField] private Subject _playerSubject;
+    [SerializeField] private string _musicName;
 
     void Awake()
     {
-        _playerSubject = GameObject.FindGameObjectWithTag("Player").GetComponent<Subject>();
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if(player != null)
+        {
+            _playerSubject = player.GetComponent<Subject>();
+        }
+        
+        
+    }
+
+    public void Start()
+    {
+        var musicAsset = audios.Find(a => a.AudioName == _musicName);
+        AudioController.Instance.PlayMusic(musicAsset);
     }
 
     void OnEnable()
     {
+        if (_playerSubject == null)
+        {
+            return;
+        }
         _playerSubject.AddObserver(this);
     }
 
     void OnDisable()
     {
+        if (_playerSubject == null)
+        {
+            return;
+        }
         _playerSubject.RemoveObserver(this);
     }
     public void OnNotify(PlayerEnums playerEnums)
     {
+        AudioAsset asset = null;
         switch(playerEnums)
         {
             case PlayerEnums.Jump:
-                _sfxPlayer.clip = audios.Find(s => s.audioName == "Jump").audioClip;
-                _sfxPlayer.Play();
+                audios.Find(s => s.AudioName == "Jump");
+                AudioController.Instance.PlaySfx(asset);
                 break;
             case PlayerEnums.Died:
-                _sfxPlayer.clip = audios.Find(s => s.audioName == "Died").audioClip;
-                _sfxPlayer.Play();
+                audios.Find(s => s.AudioName == "Die");
+                AudioController.Instance.PlaySfx(asset);
                 break;
             default:
                 break;
