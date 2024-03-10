@@ -25,9 +25,6 @@ public class PlayerController : Subject
 
     [SerializeField] CharacterController _controller;
 
-    [Header("JoyStick")]
-    [SerializeField] private Joystick _joystick;
-
     [Header("Movements")]
 
     [SerializeField] float _speed;
@@ -75,7 +72,6 @@ public class PlayerController : Subject
         {
             _velocity.y = -2.0f;
         }
-        _move = _joystick.Direction;
         _camForward = _camera.transform.forward;
         _camRight = _camera.transform.right;
         _camForward.y = 0f;
