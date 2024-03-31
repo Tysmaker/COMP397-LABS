@@ -107,14 +107,18 @@ public class PlayerController : Subject
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Triggerin with other.tag" + other.gameObject.tag);
+       
         if (other.gameObject.CompareTag("death"))
         {
-            _controller.enabled = false;
-            transform.position = _respawn.position;
-            _controller.enabled = true;
-            //Destroy(gameObject);  
+            MovePlayer(_respawn.position);
             NotifyObservers(PlayerEnums.Died);
         }
+    }
+
+    public void MovePlayer(Vector3 position)
+    {
+        _controller.enabled = false;
+        transform.position = position;
+        _controller.enabled = true;
     }
 }

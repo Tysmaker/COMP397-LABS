@@ -13,7 +13,7 @@ public class SceneController : PersistentSingleton<SceneController>
         SceneManager.LoadScene("SampleScene");
     }
 
-    public void ChangeSceneName(string sceneName)
+    public void ChangeSceneByName(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
